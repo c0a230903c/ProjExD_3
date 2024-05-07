@@ -159,6 +159,7 @@ def main():
     beam=None
     clock = pg.time.Clock()
     tmr = 0
+    exps=[]
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -191,10 +192,12 @@ def main():
 
         for i,bomb in enumerate(bombs):
             if beam is not None:
-                if beam.rct.colliderect (bomb.rct):
+                if beam.rct.colliderect(bomb.rct):  # ビームと爆弾が衝突したら
+                    exp = Explosion(bomb,100)
+                    exps.append(exp)
+                    exps = [exp for exp in exps if exp.life > 0]
                     beam=None
                     bombs[i]=None
-                    explosion=Explosion(bombs[i])
                     bird.change_img(6,screen)
                     pg.display.update()
         bombs=[bomb for bomb in bombs if bomb is not None]
@@ -205,6 +208,8 @@ def main():
             bomb.update(screen)
         if beam is not None:
             beam.update(screen)
+        for exp in exps:
+            exp.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
