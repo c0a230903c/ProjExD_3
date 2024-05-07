@@ -114,6 +114,23 @@ class Bomb:
         screen.blit(self.img, self.rct)
 
 
+class Explosion:
+    def __init__(self,obj,life:int):
+        self.imgs = [
+            pg.image.load("fig/explosion.gif"),
+            pg.transform.flip(pg.image.load("fig/explosion.gif"),True,True)
+        ]
+        self.img = self.imgs[0]
+        self.rct = self.img.get_rect()
+        self.rct.center = obj.rct.center
+        self.life = life
+
+    def update(self,screen):
+        if self.life > 0:
+            self.life -= 1
+            self.img = self.imgs[self.life % 2]
+            screen.blit(self.img,self.rct)
+
 class Beam:
     def __init__(self,bird:Bird):
         self.img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), 0, 2.0)
@@ -177,6 +194,7 @@ def main():
                 if beam.rct.colliderect (bomb.rct):
                     beam=None
                     bombs[i]=None
+                    explosion=Explosion(bombs[i])
                     bird.change_img(6,screen)
                     pg.display.update()
         bombs=[bomb for bomb in bombs if bomb is not None]
